@@ -1,0 +1,14 @@
+  
+  {
+    "validLogin": {
+    "username": "anshikaw@gmail.com",
+    "password": "Learning@830$3mK3"
+    
+  },
+
+    "invalidLogin": {
+      "username1": "another-user@example.com",
+      "password1": "another-password"
+      
+    }
+  }
