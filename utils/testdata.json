@@ -2,13 +2,13 @@
   {
     "validLogin": {
     "username": "anshikaw@gmail.com",
-    "password": "Learning@830$3mK3"
-    
+    "password": "Learning@830$3mK3",
+    "productName":"ZARA COAT 3"
   },
 
     "invalidLogin": {
       "username1": "another-user@example.com",
-      "password1": "another-password"
-      
+      "password1": "another-password",
+      "productName1":"ZARA COAT 3"
     }
   }

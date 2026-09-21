@@ -6,6 +6,7 @@ constructor(page)
     this.signInbutton= page.locator("[value='Login']");
     this.userName = page.locator("#userEmail");
     this.passWord = page.locator("#userPassword");
+    this.logoutButton = page.getByRole('button', { name: 'Sign Out' });
 
 }
 
@@ -31,8 +32,15 @@ async invalidLogin(username1,password1)
      await this.page.waitForLoadState('networkidle');
      const errorMessage = await this.page.locator("[class*='flyInOut']").textContent();
      console.log(errorMessage);
-     return errorMessage;
+     
+}
 
+async logout()
+{
+    
+    await this.logoutButton.click();
+   
 }
 }
+
 module.exports = {LoginPage};
