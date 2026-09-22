@@ -17,7 +17,8 @@
     "@azure/playwright": "^1.1.3",
     "@cucumber/cucumber": "*",
     "@playwright/test": "^1.62.1",
-    "allure-playwright": "^2.0.0-beta.15",
+    "allure-commandline": "^2.46.1",
+    "allure-playwright": "^2.15.1",
     "typescript": "^5.4.5"
   },
   "dependencies": {
