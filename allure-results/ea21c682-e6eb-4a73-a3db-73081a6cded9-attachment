@@ -1,0 +1,42 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: API/Login_API.spec.js >> Login API Tests >> Invalid Login API with missing username
+- Location: tests/API/Login_API.spec.js:59:5
+
+# Error details
+
+```
+TypeError: apiRequestContext.post: Invalid URL
+```
+
+# Test source
+
+```ts
+  1  | class LoginAPI {
+  2  | 
+  3  |     constructor(request) {
+  4  |         this.request = request;
+  5  |         this.loginEndpoint = '/api/ecom/auth/login';
+  6  |     }
+  7  | 
+  8  |     async login(username, password) {
+> 9  |         return await this.request.post(this.loginEndpoint, 
+     |                                   ^ TypeError: apiRequestContext.post: Invalid URL
+  10 |         {
+  11 |             data: 
+  12 |             {
+  13 |                 userEmail: username,
+  14 |                 userPassword: password
+  15 |             }
+  16 |         });
+  17 |     }
+  18 | }
+  19 | 
+  20 | module.exports = { LoginAPI };
+```

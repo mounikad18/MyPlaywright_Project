@@ -1,0 +1,96 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: API/Login_API.spec.js >> Login API Tests >> Invalid Login API
+- Location: tests/API/Login_API.spec.js:21:5
+
+# Error details
+
+```
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: 401
+Received: 400
+```
+
+# Test source
+
+```ts
+  1  | const { test, expect } = require('@playwright/test');
+  2  | const { LoginAPI } = require('../../pageobjects/Login_API');
+  3  | const testData = require('../../utils/testdata.json');
+  4  | 
+  5  | test.describe('Login API Tests', () => {
+  6  | 
+  7  |     test('Valid Login API', async ({ request }) => {
+  8  | 
+  9  |         const loginAPI = new LoginAPI(request);
+  10 | 
+  11 |         const response = await loginAPI.login(testData.validLogin.username, testData.validLogin.password);
+  12 | 
+  13 |         expect(response.status()).toBe(200);
+  14 | 
+  15 |         const body = await response.json();
+  16 | 
+  17 |         expect(body.message).toBe('Login Successfully');
+  18 |         expect(body.token).toBeTruthy();
+  19 |         expect(body.userId).toBeTruthy();
+  20 |     });
+  21 |     test('Invalid Login API', async ({ request }) => {
+  22 | 
+  23 |         const loginAPI = new LoginAPI(request);
+  24 | 
+  25 |         const response = await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  26 | 
+> 27 |         expect(response.status()).toBe(401);
+     |                                   ^ Error: expect(received).toBe(expected) // Object.is equality
+  28 | 
+  29 |         const body = await response.json();
+  30 | 
+  31 |         expect(body.message).toBe('Invalid credentials');
+  32 |     });
+  33 | 
+  34 |     test('Invalid Login API with empty credentials', async ({ request }) => {
+  35 | 
+  36 |         const loginAPI = new LoginAPI(request);
+  37 | 
+  38 |         const response = await loginAPI.login('', '');
+  39 | 
+  40 |         expect(response.status()).toBe(400);
+  41 | 
+  42 |         const body = await response.json();
+  43 | 
+  44 |         expect(body.message).toBe('Please fill all fields');
+  45 |     });
+  46 | 
+  47 |     test('API Login with missing password', async ({ request }) => {
+  48 | 
+  49 |         const loginAPI = new LoginAPI(request);
+  50 | 
+  51 |         const response = await loginAPI.login(testData.validLogin.username, '');
+  52 | 
+  53 |         expect(response.status()).toBe(400);
+  54 | 
+  55 |         const body = await response.json();
+  56 | 
+  57 |         expect(body.message).toBe('Please fill all fields');
+  58 |     });
+  59 |     test('Invalid Login API with missing username', async ({ request }) => {
+  60 | 
+  61 |         const loginAPI = new LoginAPI(request);
+  62 | 
+  63 |         const response = await loginAPI.login('', testData.invalidLogin.password1);
+  64 | 
+  65 |         expect(response.status()).toBe(400);
+  66 | 
+  67 |         const body = await response.json();
+  68 | 
+  69 |         expect(body.message).toBe('Please fill all fields');
+  70 |     });
+  71 | });
+```

@@ -1,0 +1,183 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: API/Login_API.spec.js >> Login API Tests >> Valid Login API and browser back button test
+- Location: tests/API/Login_API.spec.js:148:5
+
+# Error details
+
+```
+Error: expect(page).toHaveURL(expected) failed
+
+Expected: "https://rahulshettyacademy.com/client"
+Received: "https://rahulshettyacademy.com/client/#/auth/login"
+Timeout:  5000ms
+
+Call log:
+  - Expect "toHaveURL" with timeout 5000ms
+    14 × locator resolved to <html lang="en">…</html>
+       - unexpected value "https://rahulshettyacademy.com/client/#/auth/login"
+
+```
+
+```yaml
+- banner:
+  - text: Ecom
+  - link " dummywebsite@rahulshettyacademy.com":
+    - /url: emailto:dummywebsite@rahulshettyacademy.com
+  - link "":
+    - /url: "#"
+  - link "":
+    - /url: "#"
+  - link "":
+    - /url: "#"
+  - link "":
+    - /url: "#"
+- heading "We Make Your Shopping Simple" [level=3]
+- heading "Practice Website for Rahul Shetty Academy Students" [level=1]:
+  - text: Practice Website for
+  - emphasis: Rahul Shetty Academy
+  - text: Students
+- link "Register":
+  - /url: "#/auth/register"
+- paragraph: Register to sign in with your personal account
+- heading "Log in" [level=1]
+- text: Email
+- textbox "email@example.com"
+- text: Password
+- textbox "enter your passsword"
+- button "Login"
+- link "Forgot password?":
+  - /url: "#/auth/password-new"
+- paragraph: Don't have an account? Register here
+- heading "Why People Choose Us?" [level=1]
+- text: 
+- heading "3546540" [level=1]
+- paragraph: Successfull Orders
+- text: 
+- heading "37653" [level=1]
+- paragraph: Customers
+- text: 
+- heading "3243" [level=1]
+- paragraph: Sellers
+- text: 
+- heading "4500+" [level=1]
+- paragraph: Daily Orders
+- text: 
+- heading "500+" [level=1]
+- paragraph: Daily New Customer Joining
+```
+
+# Test source
+
+```ts
+  69  |         expect(body.message).toBe('Email is required');
+  70  |     });
+  71  | 
+  72  |     test('Invalid Login API with invalid email format', async ({ request }) => {
+  73  | 
+  74  |         const loginAPI = new LoginAPI(request);
+  75  | 
+  76  |         const response = await loginAPI.login('invalidemail', testData.invalidLogin.password1);
+  77  | 
+  78  |         expect(response.status()).toBe(400);
+  79  | 
+  80  |         const body = await response.json();
+  81  | 
+  82  |         expect(body.message).toBe('Incorrect email or password.');
+  83  |     });
+  84  |     // Additional test cases can be added here for other scenarios like SQL injection, XSS, etc.
+  85  | 
+  86  |     test('Invalid Login API with SQL injection attempt', async ({ request }) => {
+  87  | 
+  88  |         const loginAPI = new LoginAPI(request);
+  89  | 
+  90  |         const response = await loginAPI.login("' OR '1'='1", testData.invalidLogin.password1);
+  91  | 
+  92  |         expect(response.status()).toBe(400);
+  93  | 
+  94  |         const body = await response.json();
+  95  | 
+  96  |         expect(body.message).toBe('Incorrect email or password.');
+  97  |     });
+  98  |     test('Invalid Login API with XSS attempt', async ({ request }) => {
+  99  | 
+  100 |         const loginAPI = new LoginAPI(request);
+  101 | 
+  102 |         const response = await loginAPI.login("<script>alert('XSS')</script>", testData.invalidLogin.password1);
+  103 | 
+  104 |         expect(response.status()).toBe(400);
+  105 | 
+  106 |         const body = await response.json();
+  107 | 
+  108 |         expect(body.message).toBe('Incorrect email or password.');
+  109 |     });
+  110 | 
+  111 |     // Additional test cases can be added here for other scenarios like rate limiting, account lockout, etc.
+  112 | 
+  113 |     test('Invalid Login API with rate limiting', async ({ request }) => {
+  114 | 
+  115 |         const loginAPI = new LoginAPI(request);
+  116 | 
+  117 |         for (let i = 0; i < 10; i++) {
+  118 |             await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  119 |         }
+  120 | 
+  121 |         const response = await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  122 | 
+  123 |         expect(response.status()).toBe(429); // Assuming 429 is the status code for rate limiting
+  124 | 
+  125 |         const body = await response.json();
+  126 | 
+  127 |         expect(body.message).toBe('Too many requests. Please try again later.');
+  128 |     });
+  129 | 
+  130 |     test('Invalid Login API with account lockout', async ({ request }) => {
+  131 | 
+  132 |         const loginAPI = new LoginAPI(request);
+  133 | 
+  134 |         for (let i = 0; i < 5; i++) {
+  135 |             await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  136 |         }
+  137 | 
+  138 |         const response = await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  139 | 
+  140 |         expect(response.status()).toBe(403); // Assuming 403 is the status code for account lockout
+  141 | 
+  142 |         const body = await response.json();
+  143 | 
+  144 |         expect(body.message).toBe('Account locked due to multiple failed login attempts. Please contact support.');
+  145 |     });
+  146 | 
+  147 |     //test case with valid login, click on bakkkk arrow in the browser and click on the back button in the browser and verify that user is not able to access the dashboard page without login again
+  148 |     test('Valid Login API and browser back button test', async ({ request, page }) => {
+  149 | 
+  150 |         const loginAPI = new LoginAPI(request);
+  151 | 
+  152 |         const response = await loginAPI.login(testData.validLogin.username, testData.validLogin.password);
+  153 | 
+  154 |         expect(response.status()).toBe(200);
+  155 | 
+  156 |         const body = await response.json();
+  157 | 
+  158 |         expect(body.message).toBe('Login Successfully');
+  159 |         expect(body.token).toBeTruthy();
+  160 |         expect(body.userId).toBeTruthy();
+  161 | 
+  162 |         // Now navigate to the dashboard page
+  163 |         await page.goto('https://rahulshettyacademy.com/client/dashboard');
+  164 | 
+  165 |         // Click on the back button in the browser
+  166 |         await page.goBack();
+  167 | 
+  168 |         // Verify that user is not able to access the dashboard page without login again
+> 169 |         await expect(page).toHaveURL('https://rahulshettyacademy.com/client');
+      |                            ^ Error: expect(page).toHaveURL(expected) failed
+  170 |     });
+  171 | });
+```

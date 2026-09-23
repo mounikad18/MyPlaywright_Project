@@ -1,0 +1,153 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: API/Login_API.spec.js >> Login API Tests >> Invalid Login API with account lockout
+- Location: tests/API/Login_API.spec.js:130:5
+
+# Error details
+
+```
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: "Account locked due to multiple failed login attempts. Please contact support."
+Received: "Incorrect email or password."
+```
+
+# Test source
+
+```ts
+  44  | 
+  45  |     });
+  46  | 
+  47  |     test('API Login with missing password', async ({ request }) => {
+  48  | 
+  49  |         const loginAPI = new LoginAPI(request);
+  50  | 
+  51  |         const response = await loginAPI.login(testData.validLogin.username, '');
+  52  | 
+  53  |         expect(response.status()).toBe(400);
+  54  | 
+  55  |         const body = await response.json();
+  56  | 
+  57  |         expect(body.message).toBe('Password is required');
+  58  |     });
+  59  |     test('Invalid Login API with missing username', async ({ request }) => {
+  60  | 
+  61  |         const loginAPI = new LoginAPI(request);
+  62  | 
+  63  |         const response = await loginAPI.login('', testData.invalidLogin.password1);
+  64  | 
+  65  |         expect(response.status()).toBe(400);
+  66  | 
+  67  |         const body = await response.json();
+  68  | 
+  69  |         expect(body.message).toBe('Email is required');
+  70  |     });
+  71  | 
+  72  |     test('Invalid Login API with invalid email format', async ({ request }) => {
+  73  | 
+  74  |         const loginAPI = new LoginAPI(request);
+  75  | 
+  76  |         const response = await loginAPI.login('invalidemail', testData.invalidLogin.password1);
+  77  | 
+  78  |         expect(response.status()).toBe(400);
+  79  | 
+  80  |         const body = await response.json();
+  81  | 
+  82  |         expect(body.message).toBe('Incorrect email or password.');
+  83  |     });
+  84  |     // Additional test cases can be added here for other scenarios like SQL injection, XSS, etc.
+  85  | 
+  86  |     test('Invalid Login API with SQL injection attempt', async ({ request }) => {
+  87  | 
+  88  |         const loginAPI = new LoginAPI(request);
+  89  | 
+  90  |         const response = await loginAPI.login("' OR '1'='1", testData.invalidLogin.password1);
+  91  | 
+  92  |         expect(response.status()).toBe(400);
+  93  | 
+  94  |         const body = await response.json();
+  95  | 
+  96  |         expect(body.message).toBe('Incorrect email or password.');
+  97  |     });
+  98  |     test('Invalid Login API with XSS attempt', async ({ request }) => {
+  99  | 
+  100 |         const loginAPI = new LoginAPI(request);
+  101 | 
+  102 |         const response = await loginAPI.login("<script>alert('XSS')</script>", testData.invalidLogin.password1);
+  103 | 
+  104 |         expect(response.status()).toBe(400);
+  105 | 
+  106 |         const body = await response.json();
+  107 | 
+  108 |         expect(body.message).toBe('Incorrect email or password.');
+  109 |     });
+  110 | 
+  111 |     // Additional test cases can be added here for other scenarios like rate limiting, account lockout, etc.
+  112 | 
+  113 |     test('Invalid Login API with rate limiting', async ({ request }) => {
+  114 | 
+  115 |         const loginAPI = new LoginAPI(request);
+  116 | 
+  117 |         for (let i = 0; i < 10; i++) {
+  118 |             await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  119 |         }
+  120 | 
+  121 |         const response = await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  122 | 
+  123 |         expect(response.status()).toBe(400); 
+  124 | 
+  125 |         const body = await response.json();
+  126 | 
+  127 |         expect(body.message).toBe('Too many requests. Please try again later.');
+  128 |     });
+  129 | 
+  130 |     test('Invalid Login API with account lockout', async ({ request }) => {
+  131 | 
+  132 |         const loginAPI = new LoginAPI(request);
+  133 | 
+  134 |         for (let i = 0; i < 5; i++) {
+  135 |             await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  136 |         }
+  137 | 
+  138 |         const response = await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
+  139 | 
+  140 |         expect(response.status()).toBe(400); // Assuming 403 is the status code for account lockout
+  141 | 
+  142 |         const body = await response.json();
+  143 | 
+> 144 |         expect(body.message).toBe('Account locked due to multiple failed login attempts. Please contact support.');
+      |                              ^ Error: expect(received).toBe(expected) // Object.is equality
+  145 |     });
+  146 | 
+  147 |     //test case with valid login, click on bakkkk arrow in the browser and click on the back button in the browser and verify that user is not able to access the dashboard page without login again
+  148 |     test('Valid Login API and browser back button test', async ({ request, page }) => {
+  149 | 
+  150 |         const loginAPI = new LoginAPI(request);
+  151 | 
+  152 |         const response = await loginAPI.login(testData.validLogin.username, testData.validLogin.password);
+  153 | 
+  154 |         expect(response.status()).toBe(200);
+  155 | 
+  156 |         const body = await response.json();
+  157 | 
+  158 |         expect(body.message).toBe('Login Successfully');
+  159 |         expect(body.token).toBeTruthy();
+  160 |         expect(body.userId).toBeTruthy();
+  161 | 
+  162 |         // Now navigate to the dashboard page
+  163 |         await page.goto('https://rahulshettyacademy.com/client/dashboard');
+  164 | 
+  165 |         // Click on the back button in the browser
+  166 |         await page.goBack();
+  167 | 
+  168 |         // Verify that user is not able to access the dashboard page without login again
+  169 |         await expect(page).toHaveURL('https://rahulshettyacademy.com/client');
+  170 |     });
+  171 | });
+```

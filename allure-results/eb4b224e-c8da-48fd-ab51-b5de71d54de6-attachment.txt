@@ -1,0 +1,4 @@
+Navigated to dashboard page
+Let's Shop
+Verified that user is redirected to login page
+Let's Shop
