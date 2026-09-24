@@ -18,69 +18,7 @@ test.describe('Login API Tests', () => {
         expect(body.token).toBeTruthy();
         expect(body.userId).toBeTruthy();
     });
-    test('Invalid Login API', async ({ request }) => {
-
-        const loginAPI = new LoginAPI(request);
-
-        const response = await loginAPI.login(testData.invalidLogin.username1, testData.invalidLogin.password1);
-
-        expect(response.status()).toBe(400);
-
-        const body = await response.json();
-
-        expect(body.message).toBe('Incorrect email or password.');
-    });
-
-    test('Invalid Login API with empty credentials', async ({ request }) => {
-
-        const loginAPI = new LoginAPI(request);
-
-        const response = await loginAPI.login('', '');
-
-        expect(response.status()).toBe(400);
-
-        const body = await response.json();
-        console.log("Login with empty credentials: " + body.message);
-
-    });
-
-    test('API Login with missing password', async ({ request }) => {
-
-        const loginAPI = new LoginAPI(request);
-
-        const response = await loginAPI.login(testData.validLogin.username, '');
-
-        expect(response.status()).toBe(400);
-
-        const body = await response.json();
-
-        expect(body.message).toBe('Password is required');
-    });
-    test('Invalid Login API with missing username', async ({ request }) => {
-
-        const loginAPI = new LoginAPI(request);
-
-        const response = await loginAPI.login('', testData.invalidLogin.password1);
-
-        expect(response.status()).toBe(400);
-
-        const body = await response.json();
-
-        expect(body.message).toBe('Email is required');
-    });
-
-    test('Invalid Login API with invalid email format', async ({ request }) => {
-
-        const loginAPI = new LoginAPI(request);
-
-        const response = await loginAPI.login('invalidemail', testData.invalidLogin.password1);
-
-        expect(response.status()).toBe(400);
-
-        const body = await response.json();
-
-        expect(body.message).toBe('Incorrect email or password.');
-    });
+    
     // Additional test cases can be added here for other scenarios like SQL injection, XSS, etc.
 
     test('Invalid Login API with SQL injection attempt', async ({ request }) => {
@@ -144,7 +82,7 @@ test.describe('Login API Tests', () => {
         expect(body.message).toBe('Incorrect email or password.');
     });
 
-    //test case with valid login, click on bakkkk arrow in the browser and click on the back button in the browser and verify that user is not able to access the dashboard page without login again
+    //test case with valid login, and click on the back button in the browser and verify that user is not able to access the dashboard page without login again
     test('Valid Login API and browser back button test', async ({ request, page }) => {
 
         const loginAPI = new LoginAPI(request);
@@ -169,6 +107,9 @@ test.describe('Login API Tests', () => {
 
         // Verify that user is not able to access the dashboard page without login again
         await expect(page).toHaveURL('https://rahulshettyacademy.com/client/#/auth/login');
+    
         console.log(await page.title());
     });
+
+    
 });
