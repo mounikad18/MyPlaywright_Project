@@ -7,7 +7,7 @@ test('Valid Login API - Token can access protected API', async ({ request }) => 
 
     const loginAPI = new LoginAPI(request);
 
-    const response = await loginAPI.login(testData.validLogin.username,testData.validLogin.password);
+    const response = await loginAPI.login(testData.validLogin.username, testData.validLogin.password);
 
     expect(response.status()).toBe(200);
 
@@ -17,7 +17,7 @@ test('Valid Login API - Token can access protected API', async ({ request }) => 
 
     const protectedResponse = await request.get('/api/ecom/order/get-orders-for-customer/yourCustomerId',
         {
-            headers: 
+            headers:
             {
                 Authorization: `Bearer ${body.token}`
             }

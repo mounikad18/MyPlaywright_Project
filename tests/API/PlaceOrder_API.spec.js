@@ -13,7 +13,6 @@ test.beforeAll(async () => {
 
 })
 
-
 //create order is success
 test('@API_UI Place the order', async ({ page }) => 
 {

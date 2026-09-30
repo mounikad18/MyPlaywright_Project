@@ -17,6 +17,7 @@ test.describe('Login API Tests', () => {
         expect(body.message).toBe('Login Successfully');
         expect(body.token).toBeTruthy();
         expect(body.userId).toBeTruthy();
+        
     });
     
     // Additional test cases can be added here for other scenarios like SQL injection, XSS, etc.
